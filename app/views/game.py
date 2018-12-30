@@ -44,15 +44,14 @@ def index():
 
     rpc_client = get_rpc_client(coin)
     curr_height = rpc_client.get_block_count()
-    # TODO
-    # curr_height = 1276022
+    curr_round = curr_height + 1
 
-    odd_orders = DiceOrder.query.filter(DiceOrder.game_round == curr_height).\
+    odd_orders = DiceOrder.query.filter(DiceOrder.game_round == curr_round).\
             filter(DiceOrder.choice == 1).\
             order_by(DiceOrder.id.desc()).all()
     total_odd_amount = sum([order.amount for order in odd_orders])
 
-    even_orders = DiceOrder.query.filter(DiceOrder.game_round == curr_height).\
+    even_orders = DiceOrder.query.filter(DiceOrder.game_round == curr_round).\
             filter(DiceOrder.choice == 0).\
             order_by(DiceOrder.id.desc()).all()
     total_even_amount = sum([order.amount for order in even_orders])
@@ -66,7 +65,7 @@ def index():
     blocks = Block.query.order_by(Block.height.desc()).\
             slice((page - 1) * page_cap, page * page_cap).all()
 
-    return render_template('index.html', coin=coin, curr_height=curr_height, blocks=blocks,
+    return render_template('index.html', coin=coin, curr_round=curr_round, blocks=blocks,
             page=page, page_cap=page_cap, prev_page=(page > 1), next_page=(len(blocks) == page_cap),
             even_address=even_address, odd_address=odd_address,
             total_odd_amount=total_odd_amount, total_even_amount=total_even_amount, max_amount=max_amount,

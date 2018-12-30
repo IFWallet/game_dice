@@ -33,10 +33,10 @@ def sync_bch_block_task():
     if not latest_block:
         local_height = curr_height - 3
     else:
-        local_height = latest_block.height + 1
+        local_height = latest_block.height
 
     while local_height < curr_height:
-        block_hash = rpc_client.get_block_hash(local_height)
+        block_hash = rpc_client.get_block_hash(local_height + 1)
         if not block_hash:
             return
 
@@ -180,78 +180,87 @@ def alloc_bch_reward_task():
 @celery.task
 @LockProcessDeco(is_wait=False)
 def send_bch_reward_task():
-    records = RewardHistory.query.\
-        filter(RewardHistory.coin == coin).\
-        filter(RewardHistory.tx == None).\
-        order_by(RewardHistory.amount).limit(200).all()
-    if not records:
-        return
+    blocks = Block.query.filter(Block.coin == coin).\
+            filter(Block.is_reward == True).\
+            filter(Block.reward_tx == None).all()
 
-    rpc_client = get_rpc_client(coin)
-    available_balance, available_txs = rpc_client.get_unspent_txs(['game_dice'], 1)
-    if not available_balance:
-        current_app.logger.error("%s no available balance for withdraw" % coin)
-        return
+    for block in blocks:
+        records = RewardHistory.query.\
+            filter(RewardHistory.coin == coin).\
+            filter(RewardHistory.tx == None).\
+            filter(RewardHistory.game_round == block.height).\
+            order_by(RewardHistory.amount).all()
+        if not records:
+            return
 
-    process_records = []
-    process_amount = decimal.Decimal('0')
-    for record in records:
-        if process_amount + record.amount + record.tx_fee <= available_balance:
-            process_records.append(record)
-            process_amount += decimal.Decimal(record.amount)
-        else:
-            current_app.logger.error('%s hot wallet balance not enough' % coin)
-            break
+        rpc_client = get_rpc_client(coin)
+        available_balance, available_txs = rpc_client.get_unspent_txs(['game_dice'], 1)
+        if not available_balance:
+            current_app.logger.error("%s no available balance for withdraw" % coin)
+            return
 
-    if process_amount == 0:
-        current_app.logger.debug('%s nothing to withdraw' % coin)
-        return
+        process_records = []
+        process_amount = decimal.Decimal('0')
+        for record in records:
+            if process_amount + record.amount + record.tx_fee <= available_balance:
+                process_records.append(record)
+                process_amount += decimal.Decimal(record.amount)
+            else:
+                current_app.logger.error('%s hot wallet balance not enough' % coin)
+                break
 
-    total_output_amount = decimal.Decimal('0')
-    total_fee = decimal.Decimal('0.00005')
-    real_process_records = []
-    tx_outputs = {}
+        if process_amount == 0:
+            current_app.logger.debug('%s nothing to withdraw' % coin)
+            return
 
-    for record in process_records:
-        tx_outputs.setdefault(record.address, 0)
-        tx_outputs[record.address] += record.amount
-        total_output_amount += record.amount
-        real_process_records.append(record)
+        total_output_amount = decimal.Decimal('0')
+        total_fee = decimal.Decimal('0.00005')
+        real_process_records = []
+        tx_outputs = {}
 
-    if len(real_process_records) == 0:
-        return
+        for record in process_records:
+            tx_outputs.setdefault(record.address, 0)
+            tx_outputs[record.address] += record.amount
+            total_output_amount += record.amount
+            real_process_records.append(record)
 
-    for address in tx_outputs:
-        tx_outputs[address] = float(tx_outputs[address])
+        if len(real_process_records) == 0:
+            return
 
-    tx_inputs = []
-    total_input_amount = decimal.Decimal('0')
+        for address in tx_outputs:
+            tx_outputs[address] = float(tx_outputs[address])
 
-    for tx in available_txs:
-        tx_inputs.append({'txid': tx['txid'], 'vout': tx['vout']})
-        total_input_amount += decimal.Decimal(str(tx['amount']))
-        if total_input_amount >= total_output_amount + total_fee:
-            break
+        tx_inputs = []
+        total_input_amount = decimal.Decimal('0')
 
-    tx_fee_kb = decimal.Decimal('0.00001')
-    real_fee = rpc_client.get_fee(tx_inputs, tx_outputs, tx_fee_kb, total_fee)
+        for tx in available_txs:
+            tx_inputs.append({'txid': tx['txid'], 'vout': tx['vout']})
+            total_input_amount += decimal.Decimal(str(tx['amount']))
+            if total_input_amount >= total_output_amount + total_fee:
+                break
 
-    if total_input_amount > total_output_amount + real_fee:
-        tx_outputs, rest_amount = get_tx_outputs(
-            coin, tx_outputs, (total_input_amount - total_output_amount - real_fee))
+        tx_fee_kb = decimal.Decimal('0.00001')
+        real_fee = rpc_client.get_fee(tx_inputs, tx_outputs, tx_fee_kb, total_fee)
 
-    real_fee += rest_amount
+        if total_input_amount > total_output_amount + real_fee:
+            tx_outputs, rest_amount = get_tx_outputs(
+                coin, tx_outputs, (total_input_amount - total_output_amount - real_fee))
 
-    current_app.logger.debug(
-        "%s tx_inputs: %s\ntx_outputs: %s", coin, str(tx_inputs), str(tx_outputs))
-    current_app.logger.debug("%s input amount: %s, output amount: %s", coin, str(
-        total_input_amount), str(total_output_amount))
+        real_fee += rest_amount
 
-    txid = rpc_client.send_transaction(tx_inputs, tx_outputs)
-    for record in real_process_records:
-        record.confirmations = 0
-        record.tx = txid
+        current_app.logger.debug(
+            "%s tx_inputs: %s\ntx_outputs: %s", coin, str(tx_inputs), str(tx_outputs))
+        current_app.logger.debug("%s input amount: %s, output amount: %s", coin, str(
+            total_input_amount), str(total_output_amount))
 
-    db.session.flush()
-    db.session.commit()
+        tx_outputs['data'] = 'reward of game.cash in round #' + str(block.height)
+        txid = rpc_client.send_transaction(tx_inputs, tx_outputs)
+        for record in real_process_records:
+            record.confirmations = 0
+            record.tx = txid
+
+        db.session.flush()
+        db.session.commit()
+
+    print('send_bch_reward_task process')
 

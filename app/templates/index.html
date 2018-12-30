@@ -17,7 +17,7 @@ body{
     <div class="col-md-6">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <h3>Odd (Round #{{ curr_height }})</h3>
+                <h3>Odd (Round #{{ curr_round }})</h3>
             </div>
             <div class="panel-body">
                 <div id="odd-qrcode" class="center-block" style="width:180px;">
@@ -28,13 +28,13 @@ body{
                 <br/>
 
                 <div class="text-center">
-                    I think next BCH block #{{ curr_height }} contains <em>ODD</em> number of txs. 
+                    I think next BCH block #{{ curr_round }} contains <em>ODD</em> number of txs. 
                 </div>
                 <div class="center text-center">
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
                 </div>
 
-                <div class="progress odd-orders-btn" data-toggle="modal" data-target="#odd-orders-pop" data-height="{{ curr_height }}">
+                <div class="progress odd-orders-btn" data-toggle="modal" data-target="#odd-orders-pop" data-height="{{ curr_round }}">
                     <div data-toggle="tooltip" data-placement="top" title="click to see detail" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;width: {{ total_odd_amount / max_amount * 100 }}%;">
                         {{ strfdecimal(total_odd_amount * 100000000, 0) }} Satoshi
                     </div>
@@ -46,7 +46,7 @@ body{
     <div class="col-md-6">
         <div class="panel panel-danger">
             <div class="panel-heading">
-                <h3>Even (Round #{{ curr_height }})</h3>
+                <h3>Even (Round #{{ curr_round }})</h3>
             </div>
             <div class="panel-body">
                 <div id="even-qrcode" class="center-block" style="width:180px;">
@@ -57,13 +57,13 @@ body{
                 <br/>
 
                 <div class="center text-center">
-                    I think next BCH block #{{ curr_height }} contains <em>EVEN</em> number of txs. 
+                    I think next BCH block #{{ curr_round }} contains <em>EVEN</em> number of txs. 
                 </div>
                 <div class="center text-center">
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
                 </div>
 
-                <div class="progress even-orders-btn" data-toggle="modal" data-target="#even-orders-pop" data-height="{{ curr_height }}">
+                <div class="progress even-orders-btn" data-toggle="modal" data-target="#even-orders-pop" data-height="{{ curr_round }}">
                     <div data-toggle="tooltip" data-placement="top" data-original-title="click to see detail" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ total_even_amount / max_amount * 100 }}%;">
                         {{ strfdecimal(total_even_amount * 100000000, 0) }} Satoshi
                     </div>

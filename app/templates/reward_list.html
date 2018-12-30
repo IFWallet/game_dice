@@ -6,7 +6,6 @@
     <th>{{ _("Amount") }}</th>
     <th>{{ _("Address") }}</th>
     <th>{{ _("Transactions") }}</th>
-    <th>{{ _("Vout") }}</th>
     <th>{{ _("Business") }}</th>
   </tr>
   {% for record in records %}
@@ -22,7 +21,6 @@
         Pending
         {% endif %}
     </td>
-    <td>{{ record.vout }}</td>
     <td>{{ record.business }}</td>
   </tr>
   {% endfor %}
