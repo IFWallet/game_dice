@@ -109,7 +109,7 @@ body{
                 <td>#{{ block.height }}</td>
                 <td>{{ block.tx_count }}</td>
                 <td>{% if block.tx_count % 2 == 0 %}<span class="text-danger">EVEN Win!</span>{% else %}<span class="text-info">ODD Win!</span>{% endif %}</td>
-                <td>{% if block.reward_tx %}{{ block.reward_tx }}{% else %}Pending{% endif %}</td>
+                <td>{% if block.reward_tx %}<a target="_blank" href="{{ coin_txid_url(block.coin, block.reward_tx) }}">{{ block.reward_tx | truncate(20, True) }}</a>{% else %}Pending{% endif %}</td>
                 <td><button data-toggle="modal" data-target="#reward-history-pop" class="btn btn-primary reward-detail-btn" data-height="{{ block.height }}">Detail</button></td>
             </tr>
             {% endfor %}

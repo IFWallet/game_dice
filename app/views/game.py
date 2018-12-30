@@ -58,9 +58,6 @@ def index():
 
     max_amount = max(total_odd_amount, total_even_amount)
     max_amount = max(max_amount, 0.00000001) # not divide by 0
-    print(max_amount)
-
-    print(total_odd_amount, total_even_amount)
 
     blocks = Block.query.order_by(Block.height.desc()).\
             slice((page - 1) * page_cap, page * page_cap).all()
