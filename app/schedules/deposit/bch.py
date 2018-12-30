@@ -43,7 +43,7 @@ def process_bch_deposit_task():
 
         order = DiceOrder()
         order.coin = coin
-        order.game_round = block_height
+        order.game_round = block_height + 1
 
         order.from_address = from_address
         order.address = tx['address']
