@@ -35,7 +35,7 @@ CLIENT_AUTH = {
         }
 
 CHOICE_ADDRESSES = {
-        'BCH': ['', '', ''],
+        'BCH': ['bitcoincash:qzugzzywj840yy6a2zls8nj2ja5rgx8jtc6efrwzy5', 'bitcoincash:qqd87nlsmf8qztr2234600tr48k77hyz3c6q7kp662', 'bitcoincash:qrrlkrx4k0fywput47kvmeryfk8rl40x95rv7fqspr'],
         'BSV': ['', '', '']
         }
 
