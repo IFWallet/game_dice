@@ -106,7 +106,7 @@ body{
             </tr>
             {% for block in blocks %}
             <tr>
-                <td>#{{ block.height }}</td>
+                <td><a target="_blank" href="{{ coin_block_hash_url(coin, block.height) }}">#{{ block.height }}</a></td>
                 <td>{{ block.tx_count }}</td>
                 <td>{% if block.tx_count % 2 == 0 %}<span class="text-danger">EVEN Win!</span>{% else %}<span class="text-info">ODD Win!</span>{% endif %}</td>
                 <td>{% if block.reward_tx %}<a target="_blank" href="{{ coin_txid_url(block.coin, block.reward_tx) }}">{{ block.reward_tx | truncate(20, True) }}</a>{% else %}Pending{% endif %}</td>
