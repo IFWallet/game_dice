@@ -46,7 +46,7 @@ CELERYBEAT_SCHEDULE = {
             },
         'game_update_bch_deposit_schedule': {
             'task': 'app.schedules.deposit.bch.update_bch_deposit_task',
-            'schedule': crontab(minute='*/1'),
+            'schedule': 20,
             },
         # reward
         'game_sync_bch_block_schedule': {
@@ -63,7 +63,7 @@ CELERYBEAT_SCHEDULE = {
         #    },
         'game_send_bch_reward_schedule': {
             'task': 'app.schedules.withdraw.bch.send_bch_reward_task',
-            'schedule': crontab(minute='*/5'),
+            'schedule': crontab(minute='*/1'),
             },
         }
 

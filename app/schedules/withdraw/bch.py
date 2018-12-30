@@ -1,4 +1,5 @@
 import decimal
+import binascii
 
 from flask import g
 from flask import current_app
@@ -191,13 +192,14 @@ def send_bch_reward_task():
             filter(RewardHistory.game_round == block.height).\
             order_by(RewardHistory.amount).all()
         if not records:
-            return
+            block.reward_tx = 'No Reward'
+            continue 
 
         rpc_client = get_rpc_client(coin)
         available_balance, available_txs = rpc_client.get_unspent_txs(['game_dice'], 1)
         if not available_balance:
             current_app.logger.error("%s no available balance for withdraw" % coin)
-            return
+            continue 
 
         process_records = []
         process_amount = decimal.Decimal('0')
@@ -211,7 +213,7 @@ def send_bch_reward_task():
 
         if process_amount == 0:
             current_app.logger.debug('%s nothing to withdraw' % coin)
-            return
+            continue 
 
         total_output_amount = decimal.Decimal('0')
         total_fee = decimal.Decimal('0.00005')
@@ -225,7 +227,7 @@ def send_bch_reward_task():
             real_process_records.append(record)
 
         if len(real_process_records) == 0:
-            return
+            continue 
 
         for address in tx_outputs:
             tx_outputs[address] = float(tx_outputs[address])
@@ -252,12 +254,14 @@ def send_bch_reward_task():
             "%s tx_inputs: %s\ntx_outputs: %s", coin, str(tx_inputs), str(tx_outputs))
         current_app.logger.debug("%s input amount: %s, output amount: %s", coin, str(
             total_input_amount), str(total_output_amount))
-
-        tx_outputs['data'] = 'reward of game.cash in round #' + str(block.height)
+        # memo = 'reward of game.cash in round #' + str(block.height)
+        # tx_outputs['data'] = str(binascii.hexlify(bytes(memo, encoding="utf-8")), encoding="utf-8")
         txid = rpc_client.send_transaction(tx_inputs, tx_outputs)
         for record in real_process_records:
             record.confirmations = 0
             record.tx = txid
+
+        block.reward_tx = txid
 
         db.session.flush()
         db.session.commit()
