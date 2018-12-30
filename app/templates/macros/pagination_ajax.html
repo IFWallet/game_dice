@@ -1,0 +1,27 @@
+{% macro pagination_widget(pagination) %}
+<div class="table-nav">
+  <nav class="pagination" aria-label="navigation">
+    <ul class="pagination">
+      <li {% if not pagination.has_prev %}class="disabled"{% endif %}>
+        <a class="text-left" href="javascript:void(0);" aria-label="Previous" {% if pagination.has_prev %}page="{{ pagination.prev_num }}"{% endif %}>
+          <i class="fa fa-angle-left"></i>
+        </a>
+      </li>
+      {% for p in pagination.iter_pages() %}
+      {% if p %}
+      <li>
+        <a {% if p == pagination.page %}class="active"{% endif %} href="javascript:void(0);" page="{{ p }}">{{ p }}</a>
+      </li>
+      {% else %}
+      <li><a href="javascript:void(0);">&hellip;</a></li>
+      {% endif %}
+      {% endfor %}
+      <li {% if not pagination.has_next %}class="disabled"{% endif %}>
+        <a class="text-right" href="javascript:void(0);" aria-label="Next" {% if pagination.has_next %}page="{{ pagination.next_num }}"{% endif %}>
+          <i class="fa fa-angle-right"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+{% endmacro %}

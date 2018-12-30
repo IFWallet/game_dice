@@ -1,0 +1,97 @@
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('summary.summary') }}">IFWallet Dashboard</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+          <li id="nav-summary" {% if request.blueprint == 'summary' %}class="active"{% endif %}>
+            <a href="{{ url_for('summary.summary') }}">概览</a>
+        </li>
+
+        <li id="nav-hd-wallet" {% if request.blueprint == 'user_address' %}class="active"{% endif %}>
+            <a href="{{ url_for('user_address.user_address') }}">用户地址</a>
+        </li>
+
+        <li id="nav-app-store" {% if request.blueprint == 'app_store' %}class="active"{% endif %}>
+            <a href="{{ url_for('app_store.app_store') }}" class="dropdown-toggle" data-toggle="dropdown">应用市场<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ url_for('app_store.app_class') }}">分类</a></li>
+                <li><a href="{{ url_for('app_store.app_store') }}">应用</a></li>
+                <li><a href="{{ url_for('app_store.app_banner') }}">Banner</a></li>
+            </ul>
+        </li>
+
+        <li id="nav-config" {% if request.blueprint == 'config' %}class="active"{% endif %}>
+            <a href="{{ url_for('config.wallet') }}" class="dropdown-toggle" data-toggle="dropdown">配置<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ url_for('config.wallet') }}">钱包配置</a></li>
+            </ul>
+        </li>
+
+        <li id="nav-app-version" {% if request.blueprint == 'app_version' %}class="active"{% endif %}>
+            <a href="{{ url_for('app_version.app_version') }}">版本管理</a>
+        </li>
+
+        <li id="nav-announcement" {% if request.blueprint == 'announcement' %}class="active"{% endif %}>
+            <a href="{{ url_for('announcement.announcement_list') }}">公告</a>
+        </li>
+
+        <li id="nav-flash" {% if request.blueprint == 'flash' %}class="active"{% endif %}>
+            <a href="{{ url_for('flash.flash_list') }}">快讯</a>
+        </li>
+
+        <li id="nav-feedback" {% if request.blueprint == 'feedback' %}class="active"{% endif %}>
+            <a href="{{ url_for('feedback.feedback') }}">用户反馈</a>
+        </li>
+
+        <li id="nav-open" {% if request.blueprint == 'open' %}class="active"{% endif %}>
+            <a href="{{ url_for('open.api_key_list') }}">开放接口</a>
+        </li>
+
+        <li id="nav-monitor" {% if request.blueprint == 'monitor' %}class="active"{% endif %}>
+            <a href="{{ url_for('monitor.monitor') }}" class="dropdown-toggle" data-toggle="dropdown">监控<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ url_for('monitor.monitor') }}">访问/task</a></li>
+                <li><a href="{{ url_for('monitor.balance_monitor') }}">余额</a></li>
+            </ul>
+
+        </li>
+
+        <li id="nav-wallet" class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">钱包<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ url_for('wallet.wallet_summary') }}">统计</a></li>
+            <li><a href="{{ url_for('wallet.asset') }}">资产</a></li>
+            <li><a href="{{ url_for('wallet.hot_wallet') }}">钱包</a></li>
+            <li><a href="{{ url_for('wallet.hot_wallet_history') }}">钱包流水</a></li>
+            <li><a href="{{ url_for('wallet.deposit_history') }}">充值</a></li>
+            <li><a href="{{ url_for('wallet.withdraw_history') }}">提现</a></li>
+            <li><a href="{{ url_for('wallet.reconciliation_history') }}">对账</a></li>
+            <li><a href="{{ url_for('wallet.pending_withdraw') }}">审批</a></li>
+            <li><a href="{{ url_for('wallet.user') }}">用户</a></li>
+          </ul>
+        </li>
+
+
+        <li id="nav-app-store" {% if request.blueprint == 'tools' %}class="active"{% endif %}>
+            <a href="{{ url_for('tools.index') }}" class="dropdown-toggle" data-toggle="dropdown">工具<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ url_for('tools.address_derive') }}">HD地址派生</a></li>
+            </ul>
+        </li>
+
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right" style="position:absolute; right: 0px; top: 0px; display: flex; align-items: center; justify-content: center; color: #9d9d9d; margin-right: 5px;">
+        <li><span>{{ g.user.email }}</span></li>
+        <li><a href="{{ url_for('admin.logout') }}">退出</a></li>
+      </ul>
+    </div> <!--/.nav-collapse -->
+  </div>
+</nav>

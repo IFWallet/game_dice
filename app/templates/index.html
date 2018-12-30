@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% block css %}
+<style>
+body{
+    background-color: #381d47; 
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row text-center">
+    <h1 style="color:#ccc;">Vote Block Tx Count Win Reward</h1>
+</div>
+<br/>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3>Odd (Round #{{ curr_height }})</h3>
+            </div>
+            <div class="panel-body">
+                <div id="odd-qrcode" class="center-block" style="width:180px;">
+                </div>
+                <div class="text-center">
+                    <strong>{{ odd_address }}</strong>
+                </div>
+                <br/>
+
+                <div class="text-center">
+                    I think next BCH block #{{ curr_height }} contains <em>ODD</em> number of txs. 
+                </div>
+                <div class="center text-center">
+                    <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
+                </div>
+
+                <div class="progress odd-orders-btn" data-toggle="modal" data-target="#odd-orders-pop" data-height="{{ curr_height }}">
+                    <div data-toggle="tooltip" data-placement="top" title="click to see detail" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;width: {{ total_odd_amount / max_amount * 100 }}%;">
+                        {{ strfdecimal(total_odd_amount * 100000000, 0) }} Satoshi
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3>Even (Round #{{ curr_height }})</h3>
+            </div>
+            <div class="panel-body">
+                <div id="even-qrcode" class="center-block" style="width:180px;">
+                </div>
+                <div class="text-center">
+                    <strong>{{ even_address }}</strong>
+                </div>
+                <br/>
+
+                <div class="center text-center">
+                    I think next BCH block #{{ curr_height }} contains <em>EVEN</em> number of txs. 
+                </div>
+                <div class="center text-center">
+                    <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
+                </div>
+
+                <div class="progress even-orders-btn" data-toggle="modal" data-target="#even-orders-pop" data-height="{{ curr_height }}">
+                    <div data-toggle="tooltip" data-placement="top" data-original-title="click to see detail" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ total_even_amount / max_amount * 100 }}%;">
+                        {{ strfdecimal(total_even_amount * 100000000, 0) }} Satoshi
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>How To Play?<h4>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <em><b>Step1.</b> Send Transaction to ODD or EVEN address (minimal 0.0001 BCH)</em>
+                </li>
+                <li class="list-group-item">
+                    <em><b>Step2.</b> Waiting for new block to get Tx count (need 2 confirmations)</em>
+                </li>
+                <li class="list-group-item">
+                    <em><b>Step3.</b> System send reward to your address (charge 0.00002 BCH as fee)</em>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="container">
+        <table class="table" style="background-color: #fff;">
+            <tr>
+                <th>Height</th>
+                <th>Tx Count</th>
+                <th>Result</th>
+                <th>Reward Tx</th>
+                <th>Reward Detail</th>
+            </tr>
+            {% for block in blocks %}
+            <tr>
+                <td>#{{ block.height }}</td>
+                <td>{{ block.tx_count }}</td>
+                <td>{% if block.tx_count % 2 == 0 %}<span class="text-danger">EVEN Win!</span>{% else %}<span class="text-info">ODD Win!</span>{% endif %}</td>
+                <td>{% if block.reward_tx %}{{ block.reward_tx }}{% else %}Pending{% endif %}</td>
+                <td><button data-toggle="modal" data-target="#reward-history-pop" class="btn btn-primary reward-detail-btn" data-height="{{ block.height }}">Detail</button></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="modal fade recordTablePop" id="odd-orders-pop" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <a href="###" class="i_close" data-dismiss="modal"></a>
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4 class="recordTableTitle">#<span class="game-round"></span> ODD Orders</h4>
+                <div class="recordBox" id="odd-orders-box">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade recordTablePop" id="even-orders-pop" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <a href="###" class="i_close" data-dismiss="modal"></a>
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4 class="recordTableTitle">#<span class="game-round"></span> EVEN Orders</h4>
+                <div class="recordBox" id="even-orders-box">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade recordTablePop" id="reward-history-pop" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <a href="###" class="i_close" data-dismiss="modal"></a>
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4 class="recordTableTitle">#<span class="game-round"></span> Reward Detail</h4>
+                <div class="recordBox" id="reward-history-box">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{ static_url('js/jquery.qrcode.min.js') }}"></script>
+<script>
+$("[data-toggle='tooltip']").tooltip();
+$("#odd-qrcode").qrcode({width: 180, height: 180, text: "{{ odd_address }}"});
+$("#even-qrcode").qrcode({width: 180, height: 180, text: "{{ even_address }}"});
+
+// deposit
+function load_reward_history(height, page){
+    var url = '/reward/history/';
+    $.get(url, {'page': page, 'round': height}, function(data){
+        if (data.error.code == 0) {
+            $('#reward-history-box').html(data['result']['html']);
+        }
+    });
+}
+
+$('body').delegate('.reward-detail-btn', 'click', function(){
+    var height = $(this).attr('data-height');
+    $(this).parents('.modal').find('.game-round').text(height);
+    load_reward_history(height, 1);
+});
+
+// odd orders
+function load_odd_orders(height, page){
+    var url = '/orders/odd/';
+    console.log(height);
+    $.get(url, {'page': page, 'round': height}, function(data){
+        if (data.error.code == 0) {
+            $('#odd-orders-box').html(data['result']['html']);
+        }
+    });
+}
+
+$('body').delegate('.odd-orders-btn', 'click', function(){
+    var height = $(this).attr('data-height');
+    $('#odd-orders-pop .game-round').text(height);
+    load_odd_orders(height, 1);
+});
+
+// even orders
+function load_even_orders(height, page){
+    var url = '/orders/even/';
+    $.get(url, {'page': page, 'round': height}, function(data){
+        if (data.error.code == 0) {
+            $('#even-orders-box').html(data['result']['html']);
+        }
+    });
+}
+
+$('body').delegate('.even-orders-btn', 'click', function(){
+    var height = $(this).attr('data-height');
+    $('#even-orders-pop .game-round').text(height);
+    load_even_orders(height, 1);
+});
+
+</script>
+{% endblock %}
+

@@ -1,0 +1,39 @@
+{% import "macros/pagination_ajax.html" as macros %}
+<table class="table">
+  <tr>
+    <th>{{ _("Time") }}</th>
+    <th>{{ _("Round") }}</th>
+    <th>{{ _("Amount") }}</th>
+    <th>{{ _("Address") }}</th>
+    <th>{{ _("Transactions") }}</th>
+    <th>{{ _("Vout") }}</th>
+    <th>{{ _("Business") }}</th>
+  </tr>
+  {% for record in records %}
+  <tr>
+    <td>{{ strftime(record.create_time, f='%Y-%m-%d %H:%M') }}</td>
+    <td>{{ record.game_round }}</td>
+    <td>{{ strfdecimal(record.amount, 8) }} {{ coin }}</td>
+    <td><a target="_blank" href="{{ coin_address_url(coin, record.address) }}">{{ record.address | truncate(20, True) }}</a></td>
+    <td>
+        {% if record.tx %}
+        <a target="_blank" href="{{ coin_txid_url(coin, record.tx) }}">{{ record.tx | truncate(20, True) }}</a>
+        {% else %}
+        Pending
+        {% endif %}
+    </td>
+    <td>{{ record.vout }}</td>
+    <td>{{ record.business }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% if pagination and (records| length > 0) %}
+<center>
+  <div class="pagination">
+    {{ macros.pagination_widget(pagination) }}
+  </div>
+</center>
+{% endif %}
+
+

@@ -1,0 +1,25 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import hashlib
+
+os.chdir('app')
+with open('static_md5.py', 'w+') as output:
+    output.write('static_md5_map = {\n')
+    os.chdir('static')
+    list_dirs = os.walk('.')
+    for root, _, files in list_dirs:
+        for f in files:
+            if not os.path.splitext(f)[1] in ('.css', '.js'):
+                continue
+            path = os.path.join(root, f)[2:]
+            fp = open(path, 'r')
+            md5 = hashlib.md5(fp.read()).hexdigest()
+            output.write('    "%s": "%s",\n' % (path, md5))
+    output.write('}\n\n')
+
+os.chdir('../..')
+os.system('git add app/static_md5.py')
+
