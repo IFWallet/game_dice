@@ -16,6 +16,9 @@ from flask import flash
 from app.utils.xhr import request_ok
 from app.utils.xhr import request_error
 
+from app.utils.xhr import response_ok
+from app.utils.xhr import response_error
+
 from app.ext import redis_store
 from app.models import Block
 from app.models import DiceOrder
@@ -69,6 +72,7 @@ def index():
             total_odd_amount=total_odd_amount, total_even_amount=total_even_amount, max_amount=max_amount,
             odd_orders=odd_address, even_orders=even_orders, open_in_wallet=open_in_wallet)
 
+
 @mod.route('/orders/odd/')
 def odd_orders():
     try:
@@ -88,6 +92,7 @@ def odd_orders():
     html = render_template('order_list.html', records=pagination.items,
             pagination=pagination, coin=coin)
     return request_ok({'html': html})
+
 
 @mod.route('/orders/even/')
 def even_orders():
@@ -109,6 +114,7 @@ def even_orders():
             pagination=pagination, coin=coin)
     return request_ok({'html': html})
 
+
 @mod.route('/reward/history/')
 def reward_history():
     try:
@@ -128,4 +134,17 @@ def reward_history():
     html = render_template('reward_list.html', records=pagination.items,
             pagination=pagination, coin=coin)
     return request_ok({'html': html})
+
+
+@mod.route('/vote/callback/')
+def vote_callback():
+    try:
+        code = request.args.get('code', 0)
+        ret = request.args.get('ret', 0)
+        txid = request.args.get('txid', '')
+    except:
+        current_app.logger.info("vote_callback fail")
+
+    current_app.logger.info("vote_callback: %d, %d, %s", code, ret, txid)
+    return response_ok()
 

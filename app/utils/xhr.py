@@ -19,7 +19,6 @@ def response_ok(data=dict(), message=''):
         message = _('OK')
     return jsonify(dict(code=response_code.OK, message=message, data=data))
 
-
 def response_error(code=response_code.ERROR, message='', data=dict()):
     if not message:
         message = response_code.MESSAGES.get(code, response_code.ERROR)
