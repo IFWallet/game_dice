@@ -32,11 +32,12 @@ body{
                 </div>
                 <div class="center text-center">
                     {% if open_in_wallet %}
-                    <button id="vote-odd-btn" class="btn btn-danger">Vote</button>
+                    <button id="vote-odd-btn" class="btn btn-info">Vote</button>
                     {% else %}
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
                     {% endif %}
                 </div>
+                <br/>
 
                 <div class="progress odd-orders-btn" data-toggle="modal" data-target="#odd-orders-pop" data-height="{{ curr_round }}">
                     <div data-toggle="tooltip" data-placement="top" title="click to see detail" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;width: {{ total_odd_amount / max_amount * 100 }}%;">
@@ -70,6 +71,7 @@ body{
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
                     {% endif %}
                 </div>
+                <br/>
 
                 <div class="progress even-orders-btn" data-toggle="modal" data-target="#even-orders-pop" data-height="{{ curr_round }}">
                     <div data-toggle="tooltip" data-placement="top" data-original-title="click to see detail" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ total_even_amount / max_amount * 100 }}%;">
@@ -88,7 +90,7 @@ body{
                 <h4>How To Play?<h4>
             </div>
             <div class="panel-body">
-                <p>For example, Alice vote 0.01BCH on ODD in Round #563492, Bob vote 0.01BCH on EVEN in Round #563492, if block #563492 contain 19 transactions, then Alice win 0.02BCH, The system will charge only 0.00002 as fee, so Alice will receive 0.01998BCH after two confirmations. If one side less than other side, the winner side only can get at most 2 times of self total amount.</p>
+                <p>For example, Alice vote 0.01BCH on ODD in Round #563492, Bob vote 0.01BCH on EVEN in Round #563492, if block #563492 contain 19 transactions, then Alice win 0.02BCH, the system will charge only 0.00002BCH as fee, so Alice will receive 0.01998BCH after two confirmations. if one side less than other side, the winner side only can get at most 2 times of self total amount.</p>
                 <ul class="list-group">
                     <li class="list-group-item">
                         <em><b>Step1.</b> Send Transaction to ODD or EVEN address (minimal 0.0001 BCH)</em>
