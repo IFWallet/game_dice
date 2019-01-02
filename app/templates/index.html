@@ -31,7 +31,11 @@ body{
                     I think next BCH block #{{ curr_round }} contains <em>ODD</em> number of txs. 
                 </div>
                 <div class="center text-center">
+                    {% if open_in_wallet %}
+                    <button id="vote-odd-btn" class="btn btn-danger">Vote</button>
+                    {% else %}
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
+                    {% endif %}
                 </div>
 
                 <div class="progress odd-orders-btn" data-toggle="modal" data-target="#odd-orders-pop" data-height="{{ curr_round }}">
@@ -60,7 +64,11 @@ body{
                     I think next BCH block #{{ curr_round }} contains <em>EVEN</em> number of txs. 
                 </div>
                 <div class="center text-center">
+                    {% if open_in_wallet %}
+                    <button id="vote-even-btn" class="btn btn-danger">Vote</button>
+                    {% else %}
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
+                    {% endif %}
                 </div>
 
                 <div class="progress even-orders-btn" data-toggle="modal" data-target="#even-orders-pop" data-height="{{ curr_round }}">
@@ -79,17 +87,20 @@ body{
             <div class="panel-heading">
                 <h4>How To Play?<h4>
             </div>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    <em><b>Step1.</b> Send Transaction to ODD or EVEN address (minimal 0.0001 BCH)</em>
-                </li>
-                <li class="list-group-item">
-                    <em><b>Step2.</b> Waiting for new block to get Tx count (need 2 confirmations)</em>
-                </li>
-                <li class="list-group-item">
-                    <em><b>Step3.</b> System send reward to your address (charge 0.00002 BCH as fee)</em>
-                </li>
-            </ul>
+            <div class="panel-body">
+                <p>For example, Alice vote 0.01BCH on ODD in Round #563492, Bob vote 0.01BCH on EVEN in Round #563492, if block #563492 contain 19 transactions, then Alice win 0.02BCH, The system will charge only 0.00002 as fee, so Alice will receive 0.01998BCH after two confirmations. If one side less than other side, the winner side only can get at most 2 times of self total amount.</p>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <em><b>Step1.</b> Send Transaction to ODD or EVEN address (minimal 0.0001 BCH)</em>
+                    </li>
+                    <li class="list-group-item">
+                        <em><b>Step2.</b> Waiting for new block to get Tx count (need 2 confirmations)</em>
+                    </li>
+                    <li class="list-group-item">
+                        <em><b>Step3.</b> System send reward to your address (charge 0.00002 BCH as fee)</em>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -212,6 +223,39 @@ $('body').delegate('.even-orders-btn', 'click', function(){
     var height = $(this).attr('data-height');
     $('#even-orders-pop .game-round').text(height);
     load_even_orders(height, 1);
+});
+
+
+$('#vote-odd-btn').click(function(){
+    const auth = {
+        version: '1.0',
+        schema: 'BCH',
+        dappName: 'ijedi.cash',
+        dappIcon: 'https://ifwallet-rn.oss-cn-shenzhen.aliyuncs.com/dapp_store/dapp/ifphoto%403x.png',
+        to: '{{ odd_address }}',
+        remarks: 'dice vote odd',
+        callbackUrl: '',
+        action: 'transfer',
+        uid: 'uid value'
+    }
+    var payload = JSON.stringify(auth);
+    window.postMessage("owallet://" + payload);
+});
+
+$('#vote-even-btn').click(function(){
+    const auth = {
+        version: '1.0',
+        schema: 'BCH',
+        dappName: 'ijedi.cash',
+        dappIcon: 'https://ifwallet-rn.oss-cn-shenzhen.aliyuncs.com/dapp_store/dapp/ifphoto%403x.png',
+        to: '{{ even_address }}',
+        remarks: 'dice vote even',
+        callbackUrl: '',
+        action: 'transfer',
+        uid: 'uid value'
+    }
+    var payload = JSON.stringify(auth);
+    window.postMessage("owallet://" + payload);
 });
 
 </script>

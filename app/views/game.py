@@ -36,6 +36,7 @@ def index():
         page = int(request.args.get('page', '1'))
         page = page if page > 0 else 1
         page_cap = 20
+        open_in_wallet = int(request.args.get('in_wallet', '0'))
     except:
         return redirect(url_for('game.index'))
 
@@ -66,7 +67,7 @@ def index():
             page=page, page_cap=page_cap, prev_page=(page > 1), next_page=(len(blocks) == page_cap),
             even_address=even_address, odd_address=odd_address,
             total_odd_amount=total_odd_amount, total_even_amount=total_even_amount, max_amount=max_amount,
-            odd_orders=odd_address, even_orders=even_orders)
+            odd_orders=odd_address, even_orders=even_orders, open_in_wallet=open_in_wallet)
 
 @mod.route('/orders/odd/')
 def odd_orders():
