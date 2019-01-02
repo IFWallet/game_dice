@@ -127,7 +127,7 @@ def alloc_bch_reward_task():
                 for order in even_orders:
                     return_amount = (even_total - reward_total) * (order.amount / even_total)
 
-                    if reward_amount < tx_fee:
+                    if return_amount < tx_fee:
                         continue
 
                     reward = RewardHistory()
@@ -193,6 +193,7 @@ def send_bch_reward_task():
             order_by(RewardHistory.amount).all()
         if not records:
             block.reward_tx = 'No Reward'
+            db.session.commit()
             continue 
 
         rpc_client = get_rpc_client(coin)
