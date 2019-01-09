@@ -5,6 +5,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# setting
+app/setting.py
+app/testing.py
+
 log/
 *log
 src/

@@ -5,9 +5,9 @@ DEFAULT_LANGUAGES = 'en_US'
 SUPPORTED_LANGUAGES = ['en_US', 'zh_Hans_CN', 'zh_Hant_HK']
 
 SESSION_LIFETIME = 86400
-SECRET_KEY = '\x07\x8c\xf0\x97E\xa4|\xa6\x00\x1d\x10\xbd]\x15\xb3\xedE\x93\x98\xde\xbcUw9\x8e\x04\x87] \xce'
+SECRET_KEY = 'Your Secret Key'
 
-SQLALCHEMY_DATABASE_URI = 'mysql://ifwallet:hC8b6dooA#Rh3c=P@rm-j6cg474s521349qke.mysql.rds.aliyuncs.com/game_dice'
+SQLALCHEMY_DATABASE_URI = 'mysql://user:password@mysql_server/game_dice'
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 CACHE_TYPE = "redis"
@@ -21,16 +21,16 @@ PAGE_CAPACITY = 20
 
 CLIENT_AUTH = {
         'bitcoin_cash': {
-            'host': '192.168.0.165',
+            'host': '192.168.0.1',
             'port': 8332,
             'protocol': 'http',
-            'auth': ('ifwallet', 'WZhcAhg6bYHwT9a')
+            'auth': ('rpcuser', 'rpcpassword')
             },
         'bitcoin_sv': {
-            'host': '192.168.0.170',
+            'host': '192.168.0.2',
             'port': 8332,
             'protocol': 'http',
-            'auth': ('ifwallet', '4h&gxaAR,YHnwQtMp')
+            'auth': ('rpcuser', 'rpcpassword')
             }
         }
 
@@ -40,4 +40,3 @@ CHOICE_ADDRESSES = {
         }
 
 
-BITDB_API_KEY = "qpmy6xjrxewz7n8vy2jhx3rka5vr9vjx6c069770tp"

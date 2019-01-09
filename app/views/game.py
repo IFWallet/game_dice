@@ -143,8 +143,8 @@ def vote_callback():
         ret = request.args.get('ret', 0)
         txid = request.args.get('txid', '')
     except:
-        current_app.logger.info("vote_callback fail")
+        current_app.logger.debug("vote_callback fail")
 
-    current_app.logger.info("vote_callback: %d, %d, %s", code, ret, txid)
+    current_app.logger.debug("vote_callback: %d, %d, %s", code, ret, txid)
     return response_ok()
 
