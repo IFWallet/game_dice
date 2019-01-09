@@ -10,6 +10,7 @@ body{
 {% block content %}
 <div class="row text-center">
     <h1 style="color:#ccc;">Vote Block Tx Count Win Reward</h1>
+    <button onclick="reload_page()" class="btn btn-default">Refresh</button>
 </div>
 <br/>
 
@@ -23,7 +24,7 @@ body{
                 <div id="odd-qrcode" class="center-block" style="width:180px;">
                 </div>
                 <div class="text-center">
-                    <strong>{{ odd_address }}</strong>
+                    <strong>{{ odd_address | replace("bitcoincash:", "")}}</strong>
                 </div>
                 <br/>
 
@@ -32,11 +33,12 @@ body{
                 </div>
                 <div class="center text-center">
                     {% if open_in_wallet %}
-                    <button id="vote-odd-btn" class="btn btn-danger">Vote</button>
+                    <button id="vote-odd-btn" class="btn btn-info">Vote</button>
                     {% else %}
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
                     {% endif %}
                 </div>
+                <br/>
 
                 <div class="progress odd-orders-btn" data-toggle="modal" data-target="#odd-orders-pop" data-height="{{ curr_round }}">
                     <div data-toggle="tooltip" data-placement="top" title="click to see detail" class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;width: {{ total_odd_amount / max_amount * 100 }}%;">
@@ -56,7 +58,7 @@ body{
                 <div id="even-qrcode" class="center-block" style="width:180px;">
                 </div>
                 <div class="text-center">
-                    <strong>{{ even_address }}</strong>
+                    <strong>{{ even_address | replace("bitcoincash:", "") }}</strong>
                 </div>
                 <br/>
 
@@ -70,6 +72,7 @@ body{
                     <h4 style="color: red;">Send Tx to Above Address to Vote</h4>
                     {% endif %}
                 </div>
+                <br/>
 
                 <div class="progress even-orders-btn" data-toggle="modal" data-target="#even-orders-pop" data-height="{{ curr_round }}">
                     <div data-toggle="tooltip" data-placement="top" data-original-title="click to see detail" class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{ total_even_amount / max_amount * 100 }}%;">
@@ -88,7 +91,7 @@ body{
                 <h4>How To Play?<h4>
             </div>
             <div class="panel-body">
-                <p>For example, Alice vote 0.01BCH on ODD in Round #563492, Bob vote 0.01BCH on EVEN in Round #563492, if block #563492 contain 19 transactions, then Alice win 0.02BCH, The system will charge only 0.00002 as fee, so Alice will receive 0.01998BCH after two confirmations. If one side less than other side, the winner side only can get at most 2 times of self total amount.</p>
+                <p>For example, Alice vote 0.01BCH on ODD in Round #563492, Bob vote 0.01BCH on EVEN in Round #563492, if block #563492 contain 19 transactions, then Alice win 0.02BCH, the system will charge only 0.00002BCH as fee, so Alice will receive 0.01998BCH after two confirmations. if one side less than other side, the winner side only can get at most 2 times of self total amount.</p>
                 <ul class="list-group">
                     <li class="list-group-item">
                         <em><b>Step1.</b> Send Transaction to ODD or EVEN address (minimal 0.0001 BCH)</em>
@@ -120,7 +123,7 @@ body{
                 <td><a target="_blank" href="{{ coin_block_hash_url(coin, block.height) }}">#{{ block.height }}</a></td>
                 <td>{{ block.tx_count }}</td>
                 <td>{% if block.tx_count % 2 == 0 %}<span class="text-danger">EVEN Win!</span>{% else %}<span class="text-info">ODD Win!</span>{% endif %}</td>
-                <td>{% if block.reward_tx %}{% if block.reward_tx == 'No Reward' %}No Reward{% else %}<a target="_blank" href="{{ coin_txid_url(block.coin, block.reward_tx) }}">{{ block.reward_tx | truncate(20, True) }}</a>{% endif %}{% else %}Pending{% endif %}</td>
+                <td>{% if block.reward_tx %}{% if block.reward_tx == 'No Reward' %}No Reward{% else %}<a target="_blank" href="{{ coin_txid_url(block.coin, block.reward_tx) }}">{{ block.reward_tx | truncate(10, True) }}</a>{% endif %}{% else %}Pending{% endif %}</td>
                 <td><button data-toggle="modal" data-target="#reward-history-pop" class="btn btn-primary reward-detail-btn" data-height="{{ block.height }}">Detail</button></td>
             </tr>
             {% endfor %}
@@ -176,6 +179,10 @@ $("[data-toggle='tooltip']").tooltip();
 $("#odd-qrcode").qrcode({width: 180, height: 180, text: "{{ odd_address }}"});
 $("#even-qrcode").qrcode({width: 180, height: 180, text: "{{ even_address }}"});
 
+function reload_page(){
+    location.reload();
+}
+
 // deposit
 function load_reward_history(height, page){
     var url = '/reward/history/';
@@ -188,14 +195,13 @@ function load_reward_history(height, page){
 
 $('body').delegate('.reward-detail-btn', 'click', function(){
     var height = $(this).attr('data-height');
-    $(this).parents('.modal').find('.game-round').text(height);
+    $('#reward-history-pop .game-round').text(height);
     load_reward_history(height, 1);
 });
 
 // odd orders
 function load_odd_orders(height, page){
     var url = '/orders/odd/';
-    console.log(height);
     $.get(url, {'page': page, 'round': height}, function(data){
         if (data.error.code == 0) {
             $('#odd-orders-box').html(data['result']['html']);

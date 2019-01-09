@@ -1,23 +1,21 @@
 {% import "macros/pagination_ajax.html" as macros %}
 <table class="table table-striped">
   <tr>
-    <th>{{ _("Time") }}</th>
-    <th>{{ _("Amount") }}</th>
+    <!--<th>{{ _("Time") }}</th>-->
     <th>{{ _("Address") }}</th>
-    <th>{{ _("Transactions") }}</th>
+    <th>{{ _("Amount") }}</th>
+    <th>{{ _("Tx") }}</th>
     <th>{{ _("Vout") }}</th>
-    <th>{{ _("Confirmations") }}</th>
-    <th>{{ _("Reward") }}</th>
+    <th>{{ _("Confs") }}</th>
   </tr>
   {% for record in records %}
   <tr>
-    <td>{{ strftime(record.create_time, f='%Y-%m-%d %H:%M') }}</td>
+    <!--<td>{{ strftime(record.create_time, f='%Y-%m-%d %H:%M') }}</td>-->
+    <td><a target="_blank" href="{{ coin_address_url(coin, record.from_address)}}">{{ record.from_address | replace("bitcoincash:", "") | truncate(10, True) }}</a></td>
     <td>{{ strfdecimal(record.amount, 8) }} {{ coin }}</td>
-    <td><a target="_blank" href="{{ coin_address_url(coin, record.from_address)}}">{{ record.from_address | truncate(20, True) }}</a></td>
-    <td><a target="_blank" href="{{ coin_txid_url(coin, record.tx) }}">{{ record.tx | truncate(20, True) }}</a></td>
+    <td><a target="_blank" href="{{ coin_txid_url(coin, record.tx) }}">{{ record.tx | truncate(10, True) }}</a></td>
     <td>{{ record.vout }}</td>
     <td>{{ record.confirmations }}</td>
-    <td>{% if record.is_reward %}yes{% else %}not yet{% endif %}</td>
   </tr>
   {% endfor %}
 </table>
